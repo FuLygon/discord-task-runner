@@ -21,7 +21,7 @@ var (
 )
 
 func Run(cfg config.Config) {
-	session, err := discordgo.New("Bot " + cfg.Token)
+	session, err := discordgo.New("Bot " + cfg.BotToken)
 	if err != nil {
 		log.Println("error creating Discord session,", err)
 		return

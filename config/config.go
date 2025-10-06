@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	Token     string         `yaml:"token"`
+	BotToken  string         `yaml:"bot_token"`
 	ProjectID string         `yaml:"project_id"`
 	Device    []Device       `yaml:"devices"`
 	Commands  []SlashCommand `yaml:"commands"`

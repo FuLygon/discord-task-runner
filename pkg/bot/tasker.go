@@ -13,8 +13,16 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	targetDevice := i.ApplicationCommandData().Options[0].Value.(string)
 	targetDeviceToken := deviceToken[targetDevice]
 	targetTask := commandTask[cmd]
+	variables := make(map[string]string)
 
-	err := tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, nil)
+	// handle variables
+	if len(i.ApplicationCommandData().Options) > 1 {
+		for _, options := range i.ApplicationCommandData().Options[1:] {
+			variables[options.Name] = options.Value.(string)
+		}
+	}
+
+	err := tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, variables)
 	if err != nil {
 		log.Printf("error execute command /%v on device %v: %v\n", cmd, targetDevice, err)
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{

@@ -11,7 +11,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var commandHandlers = make(map[string]func(*discordgo.Session, *discordgo.InteractionCreate))
+var (
+	// project id needed to send message
+	projectId string
+	// token for device
+	deviceToken = make(map[string]string)
+	// assigned task for the command
+	commandTask = make(map[string]string)
+)
 
 func Run(cfg config.Config) {
 	session, err := discordgo.New("Bot " + cfg.Token)
@@ -26,6 +33,9 @@ func Run(cfg config.Config) {
 		return
 	}
 	defer session.Close()
+
+	// set project id
+	projectId = cfg.ProjectID
 
 	// remove existing slash commands
 	err = removeCommand(session)
@@ -74,21 +84,38 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 			Type:        discordgo.ChatApplicationCommand,
 		}
 
+		// add device option and choices
+		devicesOption := &discordgo.ApplicationCommandOption{
+			Type:        discordgo.ApplicationCommandOptionString,
+			Name:        "device",
+			Description: "Device to execute task",
+			Required:    true,
+		}
+		for _, device := range conf.Device {
+			devicesOption.Choices = append(devicesOption.Choices, &discordgo.ApplicationCommandOptionChoice{
+				Name:  device.Name,
+				Value: device.Name,
+			})
+			deviceToken[device.Name] = device.Token
+		}
+		cmd.Options = append(cmd.Options, devicesOption)
+
+		// assign target task
+		commandTask[cmdConfig.Name] = cmdConfig.Task
+
+		// add extra options if configured
 		if len(cmdConfig.Variables) > 0 {
-			var cmdOptions []*discordgo.ApplicationCommandOption
 			for _, variable := range cmdConfig.Variables {
-				options := &discordgo.ApplicationCommandOption{
+				option := &discordgo.ApplicationCommandOption{
 					Type:        discordgo.ApplicationCommandOptionString,
 					Name:        variable.Name,
 					Description: variable.Description,
 					Required:    variable.Required,
 				}
-				cmdOptions = append(cmdOptions, options)
+				cmd.Options = append(cmd.Options, option)
 			}
-			cmd.Options = cmdOptions
 		}
 
-		commandHandlers[cmd.Name] = handleTest
 		commands = append(commands, cmd)
 	}
 
@@ -104,22 +131,9 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 	return nil
 }
 
-func handleTest(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "hello",
-		},
-	})
-}
-
 func interactions(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if i.Type != discordgo.InteractionApplicationCommand {
 		return
 	}
-
-	commandName := i.ApplicationCommandData().Name
-	if handler, ok := commandHandlers[commandName]; ok {
-		handler(s, i)
-	}
+	handleTasker(s, i)
 }

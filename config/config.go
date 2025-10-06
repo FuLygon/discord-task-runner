@@ -8,13 +8,21 @@ import (
 )
 
 type Config struct {
-	Token    string         `yaml:"token"`
-	Commands []SlashCommand `yaml:"commands"`
+	Token     string         `yaml:"token"`
+	ProjectID string         `yaml:"project_id"`
+	Device    []Device       `yaml:"devices"`
+	Commands  []SlashCommand `yaml:"commands"`
+}
+
+type Device struct {
+	Name  string `yaml:"name"`
+	Token string `yaml:"token"`
 }
 
 type SlashCommand struct {
 	Name        string     `yaml:"name"`
 	Description string     `yaml:"description"`
+	Task        string     `yaml:"task"`
 	Variables   []Variable `yaml:"variables,omitempty"`
 }
 

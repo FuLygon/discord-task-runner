@@ -32,7 +32,7 @@ type Variable struct {
 	Required    bool   `yaml:"required"`
 }
 
-func ParseConfig(filename string) (*Config, error) {
+func LoadConfig(filename string) (*Config, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
@@ -41,7 +41,7 @@ func ParseConfig(filename string) (*Config, error) {
 	var cfg Config
 	err = yaml.Unmarshal(data, &cfg)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse config file: %w", err)
+		return nil, fmt.Errorf("failed to load config file: %w", err)
 	}
 
 	return &cfg, nil

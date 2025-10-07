@@ -123,7 +123,7 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 	for _, cmd := range commands {
 		_, err := s.ApplicationCommandCreate(s.State.User.ID, "", cmd)
 		if err != nil {
-			return fmt.Errorf("error creating command %s: %w", cmd.Name, err)
+			return fmt.Errorf("error creating command /%s: %w", cmd.Name, err)
 		}
 	}
 

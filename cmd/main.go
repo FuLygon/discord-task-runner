@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// parse config
-	cfg, err := config.ParseConfig("config.yaml")
+	cfg, err := config.LoadConfig("config.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}

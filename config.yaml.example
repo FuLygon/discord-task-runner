@@ -1,5 +1,0 @@
-token:
-
-commands:
-  - name: test
-    description: test command

@@ -25,7 +25,7 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	err := tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, variables)
 	if err != nil {
 		log.Printf("error execute command /%v on device %v: %v\n", cmd, targetDevice, err)
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Embeds: []*discordgo.MessageEmbed{
@@ -36,8 +36,12 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 				},
 			},
 		})
+		if err != nil {
+			log.Println("error sending error message", err)
+			return
+		}
 	} else {
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Embeds: []*discordgo.MessageEmbed{
@@ -48,5 +52,9 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 				},
 			},
 		})
+		if err != nil {
+			log.Println("error sending success message", err)
+			return
+		}
 	}
 }

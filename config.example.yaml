@@ -1,0 +1,21 @@
+# Discord Bot Token - required
+bot_token: token
+
+# Firebase Project ID - required
+project_id: id
+
+# Devices to perform remote task execution
+devices:
+  - name: device_name # Name of the device to execute task - required
+    token: device_token # Device token of the device to execute task - required
+
+# Command list
+commands:
+  - name: toast # Slash command name, do not include '/' in the config - required
+    description: Show toast # Description for command - required
+    task: "Show Toast" # Tasker's task name to execute - required
+     # list of command options config to pass to Tasker as variables - optional
+    variables:
+      - name: text # option name, will be passed to Tasker's task as variable, e.g. %text, do not include '%' in the config - required
+        description: Toast value # option description - required
+        required: true # if option required value - required

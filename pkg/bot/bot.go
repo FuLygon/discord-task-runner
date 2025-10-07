@@ -53,6 +53,7 @@ func Run(cfg config.Config) {
 	// register commands handler
 	session.AddHandler(interactions)
 
+	fmt.Printf("Bot invitation url: https://discord.com/oauth2/authorize?client_id=%s&permissions=0&scope=bot%%20applications.commands\n", session.State.User.ID)
 	fmt.Println("Bot is running. Ctrl-C to terminate")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

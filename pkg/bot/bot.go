@@ -76,7 +76,12 @@ func removeCommand(s *discordgo.Session) error {
 }
 
 func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error {
-	var commands []*discordgo.ApplicationCommand
+	var (
+		// command to register
+		commands []*discordgo.ApplicationCommand
+		// command choices for help command
+		helpCommandChoices []*discordgo.ApplicationCommandOptionChoice
+	)
 
 	// add commands from config files
 	for _, cmdConfig := range conf.Commands {
@@ -119,7 +124,25 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 		}
 
 		commands = append(commands, cmd)
+		helpCommandChoices = append(helpCommandChoices, &discordgo.ApplicationCommandOptionChoice{
+			Name:  cmdConfig.Name,
+			Value: cmdConfig.Name,
+		})
 	}
+
+	// help command
+	commands = append(commands, &discordgo.ApplicationCommand{
+		Name:        "help",
+		Description: "Get command help",
+		Type:        discordgo.ChatApplicationCommand,
+		Options: []*discordgo.ApplicationCommandOption{{
+			Type:        discordgo.ApplicationCommandOptionString,
+			Name:        "command",
+			Description: "Command to get help",
+			Required:    true,
+			Choices:     helpCommandChoices,
+		}},
+	})
 
 	// register each command
 	for _, cmd := range commands {
@@ -137,5 +160,11 @@ func interactions(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if i.Type != discordgo.InteractionApplicationCommand {
 		return
 	}
-	handleTasker(s, i)
+
+	switch i.ApplicationCommandData().Name {
+	case "help":
+		handleHelp(s, i)
+	default:
+		handleTasker(s, i)
+	}
 }

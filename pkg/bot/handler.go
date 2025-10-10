@@ -8,6 +8,53 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+func handleHelp(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Flags: discordgo.MessageFlagsEphemeral,
+		},
+	})
+	if err != nil {
+		log.Println("error deferring interaction", err)
+		return
+	}
+
+	// get all registered commands
+	commands, err := s.ApplicationCommands(s.State.User.ID, "")
+	if err != nil {
+		log.Println("error getting application commands", err)
+		return
+	}
+
+	// get requested command
+	reqCmd := i.ApplicationCommandData().Options[0].Value.(string)
+
+	for _, command := range commands {
+		if command.Name == reqCmd {
+			_, err = s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
+				Flags:  discordgo.MessageFlagsEphemeral,
+				Embeds: []*discordgo.MessageEmbed{generateHelpEmbed(command)},
+			})
+			if err != nil {
+				log.Println("error sending help success message: ", err)
+				return
+			}
+			return
+		}
+	}
+
+	// unknown requested command
+	_, err = s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
+		Content: "Unknown command",
+		Flags:   discordgo.MessageFlagsEphemeral,
+	})
+	if err != nil {
+		log.Println("error sending help error message: ", err)
+		return
+	}
+}
+
 func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
@@ -42,7 +89,7 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Flags:   discordgo.MessageFlagsEphemeral,
 		})
 		if err != nil {
-			log.Println("error sending error message: ", err)
+			log.Println("error sending execute error message: ", err)
 			return
 		}
 	} else {
@@ -51,7 +98,7 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Flags:   discordgo.MessageFlagsEphemeral,
 		})
 		if err != nil {
-			log.Println("error sending success message: ", err)
+			log.Println("error sending execute success message: ", err)
 			return
 		}
 	}

@@ -23,13 +23,13 @@ var (
 func Run(cfg config.Config) {
 	session, err := discordgo.New("Bot " + cfg.BotToken)
 	if err != nil {
-		log.Println("error creating Discord session,", err)
+		log.Println("error creating Discord session: ", err)
 		return
 	}
 
 	err = session.Open()
 	if err != nil {
-		log.Println("error opening connection,", err)
+		log.Println("error opening connection: ", err)
 		return
 	}
 	defer session.Close()
@@ -78,6 +78,7 @@ func removeCommand(s *discordgo.Session) error {
 func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error {
 	var commands []*discordgo.ApplicationCommand
 
+	// add commands from config files
 	for _, cmdConfig := range conf.Commands {
 		cmd := &discordgo.ApplicationCommand{
 			Name:        cmdConfig.Name,
@@ -120,7 +121,7 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 		commands = append(commands, cmd)
 	}
 
-	// Register each command
+	// register each command
 	for _, cmd := range commands {
 		_, err := s.ApplicationCommandCreate(s.State.User.ID, "", cmd)
 		if err != nil {

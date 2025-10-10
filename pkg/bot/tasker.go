@@ -2,12 +2,24 @@ package bot
 
 import (
 	"discord-tasker-runner/pkg/tasker"
+	"fmt"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Flags: discordgo.MessageFlagsEphemeral,
+		},
+	})
+	if err != nil {
+		log.Println("error deferring interaction: ", err)
+		return
+	}
+
 	// retrieve data
 	cmd := i.ApplicationCommandData().Name
 	targetDevice := i.ApplicationCommandData().Options[0].Value.(string)
@@ -22,38 +34,24 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		}
 	}
 
-	err := tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, variables)
+	err = tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, variables)
 	if err != nil {
 		log.Printf("error execute command /%v on device %v: %v\n", cmd, targetDevice, err)
-		err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Embeds: []*discordgo.MessageEmbed{
-					{
-						Description: "❌ **Error**\n\nCheck logs for detail",
-						Color:       0xff0000,
-					},
-				},
-			},
+		_, err = s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
+			Content: fmt.Sprintf("**Error executing %s**", targetTask),
+			Flags:   discordgo.MessageFlagsEphemeral,
 		})
 		if err != nil {
-			log.Println("error sending error message", err)
+			log.Println("error sending error message: ", err)
 			return
 		}
 	} else {
-		err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Embeds: []*discordgo.MessageEmbed{
-					{
-						Description: "✅ **Success**",
-						Color:       0x00ff00,
-					},
-				},
-			},
+		_, err = s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
+			Content: fmt.Sprintf("Executing **%s**", targetTask),
+			Flags:   discordgo.MessageFlagsEphemeral,
 		})
 		if err != nil {
-			log.Println("error sending success message", err)
+			log.Println("error sending success message: ", err)
 			return
 		}
 	}

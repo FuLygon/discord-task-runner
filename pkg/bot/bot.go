@@ -16,6 +16,8 @@ var (
 	projectId string
 	// token for device
 	deviceToken = make(map[string]string)
+	// ttl for execution message
+	commandTTL = make(map[string]int)
 	// assigned task for the command
 	commandTask = make(map[string]string)
 )
@@ -107,7 +109,10 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 		}
 		cmd.Options = append(cmd.Options, devicesOption)
 
-		// assign target task
+		// assign ttl for command
+		commandTTL[cmdConfig.Name] = cmdConfig.TTL
+
+		// assign task for command
 		commandTask[cmdConfig.Name] = cmdConfig.Task
 
 		// add extra options if configured

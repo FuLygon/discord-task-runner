@@ -23,6 +23,7 @@ type SlashCommand struct {
 	Name        string     `yaml:"name"`
 	Description string     `yaml:"description"`
 	Task        string     `yaml:"task"`
+	TTL         int        `yaml:"ttl"`
 	Variables   []Variable `yaml:"variables,omitempty"`
 }
 

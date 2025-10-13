@@ -17,8 +17,10 @@ commands:
   - name: toast
     # Description for command - Required
     description: Show toast
-    # Tasker's task name to execute - Required
+    # Tasker task name to execute - Required
     task: "Show Toast"
+    # Set TTL for the execution request message, in seconds - Optional, defaults to no TTL if not set
+    ttl: 10
     # List of command options config to pass to Tasker as variables - Optional
     variables:
         # Option name - Will be passed to Tasker's task as variable, e.g. %text, do not include '%' in the config - Required

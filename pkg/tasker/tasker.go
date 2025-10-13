@@ -17,12 +17,13 @@ type fcmPayload struct {
 type payloadMessage struct {
 	Token   string `json:"token"`
 	Android struct {
-		Priority string `json:"priority"`
+		Priority string  `json:"priority"`
+		TTL      *string `json:"ttl,omitempty"`
 	} `json:"android"`
 	Data map[string]string `json:"data"`
 }
 
-func ExecuteTask(projectId, deviceToken, task string, variables map[string]string) error {
+func ExecuteTask(projectId, deviceToken, task string, ttl *string, variables map[string]string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -37,7 +38,10 @@ func ExecuteTask(projectId, deviceToken, task string, variables map[string]strin
 			Token: deviceToken,
 		},
 	}
+
 	payload.Message.Android.Priority = "high"
+	payload.Message.Android.TTL = ttl
+
 	messageData := make(map[string]string)
 	messageData["task"] = task
 	if len(variables) > 0 {

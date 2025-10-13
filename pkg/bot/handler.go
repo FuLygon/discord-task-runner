@@ -68,6 +68,7 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	// retrieve data
+	var ttl *string
 	cmd := i.ApplicationCommandData().Name
 	targetDevice := i.ApplicationCommandData().Options[0].Value.(string)
 	targetDeviceToken := deviceToken[targetDevice]
@@ -80,7 +81,14 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	err = tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, variables)
+	// handle ttl
+	taskTTL, ok := commandTTL[cmd]
+	if ok && taskTTL > 0 {
+		strTTL := fmt.Sprintf("%ds", taskTTL)
+		ttl = &strTTL
+	}
+
+	err = tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, ttl, variables)
 	if err != nil {
 		log.Printf("error execute command /%v on device %v: %v\n", cmd, targetDevice, err)
 		_, err = s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{

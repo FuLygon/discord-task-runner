@@ -31,7 +31,7 @@ type SlashCommand struct {
 type Variable struct {
 	Name        string `yaml:"name" validate:"required"`
 	Description string `yaml:"description" validate:"required"`
-	Type        uint8  `yaml:"type" validate:"gte=3,lte=8|gte=10,lte=11"`
+	Type        uint8  `yaml:"type" validate:"gte=0|gte=3,lte=8|gte=10,lte=11"`
 	Required    bool   `yaml:"required"`
 }
 

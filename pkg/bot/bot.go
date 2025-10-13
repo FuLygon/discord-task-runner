@@ -114,7 +114,7 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 		if len(cmdConfig.Variables) > 0 {
 			for _, variable := range cmdConfig.Variables {
 				option := &discordgo.ApplicationCommandOption{
-					Type:        discordgo.ApplicationCommandOptionString,
+					Type:        discordgo.ApplicationCommandOptionType(variable.Type),
 					Name:        variable.Name,
 					Description: variable.Description,
 					Required:    variable.Required,

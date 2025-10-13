@@ -29,6 +29,7 @@ type SlashCommand struct {
 type Variable struct {
 	Name        string `yaml:"name"`
 	Description string `yaml:"description"`
+	Type        uint8  `yaml:"type"`
 	Required    bool   `yaml:"required"`
 }
 

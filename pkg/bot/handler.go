@@ -72,13 +72,12 @@ func handleTasker(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	targetDevice := i.ApplicationCommandData().Options[0].Value.(string)
 	targetDeviceToken := deviceToken[targetDevice]
 	targetTask := commandTask[cmd]
-	variables := make(map[string]string)
 
 	// handle variables
-	if len(i.ApplicationCommandData().Options) > 1 {
-		for _, options := range i.ApplicationCommandData().Options[1:] {
-			variables[options.Name] = options.Value.(string)
-		}
+	variables, err := convertVariables(s, i)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 
 	err = tasker.ExecuteTask(projectId, targetDeviceToken, targetTask, variables)

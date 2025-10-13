@@ -1,21 +1,32 @@
-# Discord Bot Token - required
+# Discord Bot Token - Required
 bot_token: token
 
-# Firebase Project ID - required
+# Firebase Project ID - Required
 project_id: id
 
 # Devices to perform remote task execution
 devices:
-  - name: device_name # Name of the device to execute task - required
-    token: device_token # Device token of the device to execute task - required
+    # Name of the device to execute task - Required
+  - name: device_name
+    # Device token of the device to execute task - Required
+    token: device_token
 
 # Command list
 commands:
-  - name: toast # Slash command name, do not include '/' in the config - required
-    description: Show toast # Description for command - required
-    task: "Show Toast" # Tasker's task name to execute - required
-     # list of command options config to pass to Tasker as variables - optional
+    # Slash command name - Do not include '/' in the config - Required
+  - name: toast
+    # Description for command - Required
+    description: Show toast
+    # Tasker's task name to execute - Required
+    task: "Show Toast"
+    # List of command options config to pass to Tasker as variables - Optional
     variables:
-      - name: text # option name, will be passed to Tasker's task as variable, e.g. %text, do not include '%' in the config - required
-        description: Toast value # option description - required
-        required: true # if option required value - required
+        # Option name - Will be passed to Tasker's task as variable, e.g. %text, do not include '%' in the config - Required
+      - name: text
+        # Option description - Required
+        description: Text to show toast
+        # Option type - Supported value are from [3-8], [10-11] - Optional, default value is 3 (STRING)
+        # Official discord docs: https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
+        type: 3
+        # If option required to be input - Optional
+        required: true

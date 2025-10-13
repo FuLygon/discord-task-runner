@@ -13,7 +13,7 @@ devices:
 
 # Command list
 commands:
-    # Slash command name - Do not include '/' in the config - Required
+    # Slash command name - Do not include '/' in the config, has to be unique, invalid value: 'help' - Required
   - name: toast
     # Description for command - Required
     description: Show toast
@@ -23,7 +23,7 @@ commands:
     ttl: 10
     # List of command options config to pass to Tasker as variables - Optional
     variables:
-        # Option name - Will be passed to Tasker's task as variable, e.g. %text, do not include '%' in the config - Required
+        # Option name - Will be passed to Tasker's task as variable, e.g. %text, do not include '%' in the config, has to be unique - Required
       - name: text
         # Option description - Required
         description: Text to show toast

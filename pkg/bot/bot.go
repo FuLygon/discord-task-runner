@@ -18,7 +18,7 @@ var (
 	// token for device
 	deviceToken = make(map[string]string)
 	// ttl for execution message
-	commandTTL = make(map[string]int)
+	commandTTL = make(map[string]uint)
 	// assigned task for the command
 	commandTask = make(map[string]string)
 )

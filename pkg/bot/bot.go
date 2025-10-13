@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -81,6 +82,8 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 	var (
 		// command to register
 		commands []*discordgo.ApplicationCommand
+		// command name list for log
+		commandsName []string
 		// command choices for help command
 		helpCommandChoices []*discordgo.ApplicationCommandOptionChoice
 	)
@@ -155,9 +158,10 @@ func registerCommandsFromConfig(s *discordgo.Session, conf config.Config) error 
 		if err != nil {
 			return fmt.Errorf("error creating command /%s: %w", cmd.Name, err)
 		}
+		commandsName = append(commandsName, fmt.Sprintf("/%s", cmd.Name))
 	}
 
-	fmt.Printf("Successfully registered %d slash commands.\n", len(commands))
+	fmt.Printf("Successfully registered %d slash commands: %s\n", len(commands), strings.Join(commandsName, " "))
 	return nil
 }
 

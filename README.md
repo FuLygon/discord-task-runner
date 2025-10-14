@@ -6,6 +6,10 @@ Configurable Discord Bot that can execute [Tasker](https://tasker.joaoapps.com) 
 
 You'll need to go through Tasker's [Remote Action Execution](https://tasker.joaoapps.com/userguide/en/fcm.html) guide on how to set up your device to receive FCM messages for task execution, and retrieve the device token before setting up the Bot.
 
+## Demonstration
+
+https://github.com/user-attachments/assets/0b9cf979-4f7b-4389-b152-f6eaf8c32d5a
+
 ## Setting up Bot
 
 ### Docker Installation

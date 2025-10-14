@@ -30,5 +30,5 @@ commands:
         # Option type - Supported value are from [3-8], [10-11] - Optional, default value is 3 (STRING)
         # Official discord docs: https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
         type: 3
-        # If option required to be input - Optional
+        # If option required value - Optional
         required: true

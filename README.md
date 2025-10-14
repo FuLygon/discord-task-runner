@@ -58,3 +58,4 @@ go build -o discord-tasker-runner ./cmd/main.go
 ## Known issues
 - If the slash command returns `Unknown Integration` error, restarting your **Discord client** will most likely fix it. I haven't found any workaround for this issue.
 - Tasker relies on **FCM** to execute task remotely, therefore there is no direct way to tell if the device successfully received the message and executed the task. If the device is not connected to the internet, the message will be **queued** by FCM until the device is back online. To mitigate this, you can configure the `ttl` in the config file for the slash command to set the lifespan of the message in the queue.
+- Execution messages sometimes fail to execute on the device. To ensure the task was successfully run, you should have the task send a message back to Discord (e.g. via a Webhook HTTP Request).
